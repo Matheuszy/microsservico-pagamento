@@ -23,12 +23,12 @@ public class PagamentoService {
 
     public Page<PagamentoResponse> listarPagamentos(Pageable paginacao) {
         return pagamentoRepository.findAll(paginacao)
-                .map( p -> new  PagamentoResponse(p.getValor(), p.getStatus()));
+                .map( p -> new  PagamentoResponse(p.getId(), p.getValor(), p.getStatus()));
     }
 
     public PagamentoResponse buscarPagamentoPorId(Long id) {
         Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
-        return pagamento.map(p -> new PagamentoResponse(p.getValor(), p.getStatus()))
+        return pagamento.map(p -> new PagamentoResponse(p.getId(), p.getValor(), p.getStatus()))
                 .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
     }
 
@@ -45,7 +45,7 @@ public class PagamentoService {
 
         pagamentoRepository.save(pagamento);
         return ResponseEntity.status(201)
-                .body(new PagamentoResponse(pagamento.getValor(),
+                .body(new PagamentoResponse(pagamento.getId(), pagamento.getValor(),
                         pagamento.getStatus()))
                 .getBody();
 
@@ -70,7 +70,7 @@ public class PagamentoService {
 
             pagamentoRepository.save(pagamento);
             return ResponseEntity.status(HttpStatus.ACCEPTED)
-                    .body(new PagamentoResponse(pagamento.getValor(),
+                    .body(new PagamentoResponse(pagamento.getId(), pagamento.getValor(),
                             pagamento.getStatus()))
                     .getBody();
         }
