@@ -5,6 +5,7 @@ import codex.alurafood.pagamento.dto.response.PagamentoResponse;
 import codex.alurafood.pagamento.model.Pagamento;
 import codex.alurafood.pagamento.model.Status;
 import codex.alurafood.pagamento.repository.PagamentoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ public class PagamentoService {
                 .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
     }
 
+    @Transactional
     public PagamentoResponse criarPagamento(PagamentoRequest pagamentoRequest) {
         Pagamento pagamento = new Pagamento();
         pagamento.setValor(pagamentoRequest.valor());
@@ -49,6 +51,7 @@ public class PagamentoService {
 
     }
 
+    @Transactional
     public PagamentoResponse atualizarStatusPagamento(Long id, PagamentoRequest request) {
         Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
@@ -77,6 +80,7 @@ public class PagamentoService {
         }
     }
 
+    @Transactional
     public void deletarPagamento(Long id) {
         if (pagamentoRepository.existsById(id)) {
             pagamentoRepository.deleteById(id);

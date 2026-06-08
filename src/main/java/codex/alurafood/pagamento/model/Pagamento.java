@@ -39,7 +39,7 @@ public class Pagamento {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.CRIADO;
 
     @NotNull
     private Long pedidoId;
