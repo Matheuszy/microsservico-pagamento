@@ -38,7 +38,7 @@ public class Pagamento {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Status status = Status.CRIADO;
+    private Status status;
 
     @NotNull
     private Long pedidoId;
@@ -51,13 +51,13 @@ public class Pagamento {
     }
 
 
-    public Pagamento(BigDecimal valor, String nome, String numero, String expiracao, String codigo, Status status,  Long pedidoId, Long formaDePagamento) {
+    public Pagamento(BigDecimal valor, String nome, String numero, String expiracao, String codigo, Long pedidoId, Long formaDePagamento) {
         this.valor = valor;
         this.nome = nome;
         this.numero = numero;
         this.expiracao = expiracao;
         this.codigo = codigo;
-        this.status = status;
+        this.status = Status.CRIADO;
         this.pedidoId = pedidoId;
         this.formaDePagamento = formaDePagamento;
 

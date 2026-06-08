@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS pagamentos (
     id BIGSERIAL PRIMARY KEY,
+    valor NUMERIC(19, 2) NOT NULL,
     nome VARCHAR(100) NOT NULL,
     numero VARCHAR(19) NOT NULL,
     expiracao VARCHAR(7) NOT NULL,

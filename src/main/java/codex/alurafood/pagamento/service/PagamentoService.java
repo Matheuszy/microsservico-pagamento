@@ -39,7 +39,6 @@ public class PagamentoService {
         pagamento.setNome(pagamentoRequest.nome());
         pagamento.setNumero(pagamentoRequest.numero());
         pagamento.setExpiracao(pagamentoRequest.expiracao());
-        pagamento.setStatus(pagamentoRequest.status());
         pagamento.setPedidoId(pagamentoRequest.pedidoId());
         pagamento.setFormaDePagamento(pagamentoRequest.formaDePagamento());
 
@@ -64,7 +63,6 @@ public class PagamentoService {
             pagamento.setNome(request.nome());
             pagamento.setNumero(request.numero());
             pagamento.setExpiracao(request.expiracao());
-            pagamento.setStatus(request.status());
             pagamento.setPedidoId(request.pedidoId());
             pagamento.setFormaDePagamento(request.formaDePagamento());
 
