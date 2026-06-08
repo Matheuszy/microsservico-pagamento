@@ -11,7 +11,7 @@ public record PagamentoRequest(
     String numero,
     String expiracao,
     Status status,
-    String pedidoId,
-    String formaDePagamento
+    Long pedidoId,
+    Long formaDePagamento
 ) {
 }
