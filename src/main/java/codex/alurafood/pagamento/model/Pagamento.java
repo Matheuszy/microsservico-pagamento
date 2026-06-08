@@ -33,8 +33,7 @@ public class Pagamento {
     private String expiracao;
 
     @NotBlank
-    @Max(3)
-    @Min(3)
+    @Size(min = 3, max = 3)
     private String codigo;
 
     @NotNull

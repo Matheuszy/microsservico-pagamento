@@ -1,33 +1,57 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+*.log
+logs/
+hs_err_pid*
 
-### VS Code ###
-.vscode/
+
+*.class
+
+
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+
+dependency-reduced-pom.xml
+release.properties
+
+
+*.h2.db
+*.mv.db
+*.db
+*.sqlite
+
+
+.env
+.env.*
+application-local.properties
+application-secrets.properties
+*.jks
+*.keystore
+*.p12
+
+
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/gradle.xml
+.idea/caches/
+.idea/modules.xml
+.idea/assetWizardSettings.xml
+
+
+$RECYCLE.BIN/
+
+
+*.tmp
+*.swp
+*.swo
+
