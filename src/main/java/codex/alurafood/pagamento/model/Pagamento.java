@@ -29,7 +29,7 @@ public class Pagamento {
     private String numero;
 
     @NotBlank
-    @Size(max = 7)
+    @Size(max = 10)
     private String expiracao;
 
     @NotBlank
@@ -44,14 +44,15 @@ public class Pagamento {
     private Long pedidoId;
 
     @NotNull
-    private Long formaDePagamento;
+    @Enumerated(EnumType.STRING)
+    private TipoPagamento formaDePagamento;
 
     public Pagamento() {
 
     }
 
 
-    public Pagamento(BigDecimal valor, String nome, String numero, String expiracao, String codigo, Long pedidoId, Long formaDePagamento) {
+    public Pagamento(BigDecimal valor, String nome, String numero, String expiracao, String codigo, Long pedidoId, TipoPagamento formaDePagamento) {
         this.valor = valor;
         this.nome = nome;
         this.numero = numero;

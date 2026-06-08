@@ -2,6 +2,7 @@ package codex.alurafood.pagamento.dto.request;
 
 
 import codex.alurafood.pagamento.model.Status;
+import codex.alurafood.pagamento.model.TipoPagamento;
 
 import java.math.BigDecimal;
 
@@ -12,6 +13,6 @@ public record PagamentoRequest(
     String expiracao,
     String codigo,
     Long pedidoId,
-    Long formaDePagamento
+    TipoPagamento formaDePagamento
 ) {
 }

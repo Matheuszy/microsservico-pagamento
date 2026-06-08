@@ -4,6 +4,7 @@ import codex.alurafood.pagamento.dto.request.PagamentoRequest;
 import codex.alurafood.pagamento.dto.response.PagamentoResponse;
 import codex.alurafood.pagamento.model.Pagamento;
 import codex.alurafood.pagamento.model.Status;
+import codex.alurafood.pagamento.model.TipoPagamento;
 import codex.alurafood.pagamento.repository.PagamentoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -38,9 +39,11 @@ public class PagamentoService {
         pagamento.setValor(pagamentoRequest.valor());
         pagamento.setNome(pagamentoRequest.nome());
         pagamento.setNumero(pagamentoRequest.numero());
+        pagamento.setCodigo(pagamentoRequest.codigo());
+        pagamento.setStatus(Status.CRIADO);
         pagamento.setExpiracao(pagamentoRequest.expiracao());
         pagamento.setPedidoId(pagamentoRequest.pedidoId());
-        pagamento.setFormaDePagamento(pagamentoRequest.formaDePagamento());
+        pagamento.setFormaDePagamento(TipoPagamento.valueOf(pagamentoRequest.formaDePagamento().toString()));
 
         pagamentoRepository.save(pagamento);
         return ResponseEntity.status(201)
@@ -62,9 +65,11 @@ public class PagamentoService {
             pagamento.setValor(request.valor());
             pagamento.setNome(request.nome());
             pagamento.setNumero(request.numero());
+            pagamento.setCodigo(request.codigo());
+            pagamento.setStatus(Status.CRIADO);
             pagamento.setExpiracao(request.expiracao());
             pagamento.setPedidoId(request.pedidoId());
-            pagamento.setFormaDePagamento(request.formaDePagamento());
+            pagamento.setFormaDePagamento(TipoPagamento.valueOf(request.formaDePagamento().toString()));
 
             pagamentoRepository.save(pagamento);
             return ResponseEntity.status(HttpStatus.ACCEPTED)
