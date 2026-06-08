@@ -1,17 +1,18 @@
 package codex.alurafood.pagamento.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "pagamentos")
+@Inheritance(strategy = InheritanceType.JOINED) // A mágica acontece aqui!
 @Getter
 @Setter
-public class Pagamento {
+public abstract class Pagamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,47 +22,14 @@ public class Pagamento {
     @Positive
     private BigDecimal valor;
 
-    @NotBlank
-    @Size(max = 100)
-    private String nome;
-
-    @NotBlank
-    private String numero;
-
-    @NotBlank
-    @Size(max = 10)
-    private String expiracao;
-
-    @NotBlank
-    @Size(min = 3, max = 3)
-    private String codigo;
-
     @NotNull
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.CRIADO;
 
     @NotNull
     private Long pedidoId;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private TipoPagamento formaDePagamento;
+    public Pagamento() {}
 
-    public Pagamento() {
-
-    }
-
-
-    public Pagamento(BigDecimal valor, String nome, String numero, String expiracao, String codigo, Long pedidoId, TipoPagamento formaDePagamento) {
-        this.valor = valor;
-        this.nome = nome;
-        this.numero = numero;
-        this.expiracao = expiracao;
-        this.codigo = codigo;
-        this.status = Status.CRIADO;
-        this.pedidoId = pedidoId;
-        this.formaDePagamento = formaDePagamento;
-
-    }
 
 }
