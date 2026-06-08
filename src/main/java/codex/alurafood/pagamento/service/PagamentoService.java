@@ -1,86 +1,71 @@
 package codex.alurafood.pagamento.service;
 
+import codex.alurafood.pagamento.dto.request.PagamentoCartaoRequest;
 import codex.alurafood.pagamento.dto.request.PagamentoRequest;
 import codex.alurafood.pagamento.dto.response.PagamentoResponse;
-import codex.alurafood.pagamento.model.Pagamento;
-import codex.alurafood.pagamento.model.Status;
-import codex.alurafood.pagamento.model.TipoPagamento;
+import codex.alurafood.pagamento.model.*;
 import codex.alurafood.pagamento.repository.PagamentoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PagamentoService {
+
     private final PagamentoRepository pagamentoRepository;
+
     public PagamentoService(PagamentoRepository pagamentoRepository) {
         this.pagamentoRepository = pagamentoRepository;
     }
 
     public Page<PagamentoResponse> listarPagamentos(Pageable paginacao) {
         return pagamentoRepository.findAll(paginacao)
-                .map( p -> new  PagamentoResponse(p.getId(), p.getValor(), p.getStatus()));
+                .map(p -> new PagamentoResponse(p.getId(), p.getValor(), p.getStatus(), getTipo(p)));
     }
 
     public PagamentoResponse buscarPagamentoPorId(Long id) {
-        Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
-        return pagamento.map(p -> new PagamentoResponse(p.getId(), p.getValor(), p.getStatus()))
+        Pagamento pagamento = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
+        return new PagamentoResponse(pagamento.getId(), pagamento.getValor(), pagamento.getStatus(), getTipo(pagamento));
     }
 
     @Transactional
-    public PagamentoResponse criarPagamento(PagamentoRequest pagamentoRequest) {
-        Pagamento pagamento = new Pagamento();
-        pagamento.setValor(pagamentoRequest.valor());
-        pagamento.setNome(pagamentoRequest.nome());
-        pagamento.setNumero(pagamentoRequest.numero());
-        pagamento.setCodigo(pagamentoRequest.codigo());
+    public PagamentoResponse criarPagamento(PagamentoRequest request) {
+        Pagamento pagamento;
+
+        if (request instanceof PagamentoCartaoRequest cartaoRequest) {
+            PagamentoCartao cartao = new PagamentoCartao();
+            cartao.setNome(cartaoRequest.nome());
+            cartao.setNumero(cartaoRequest.numero());
+            cartao.setCodigo(cartaoRequest.codigo());
+            cartao.setExpiracao(cartaoRequest.expiracao());
+            cartao.setFormaDePagamento(cartaoRequest.formaDePagamento());
+            pagamento = cartao;
+        } else {
+            PagamentoPix pix = new PagamentoPix();
+            pix.setFormaDePagamento(TipoPagamento.PIX);
+            pagamento = pix;
+        }
+
+        pagamento.setValor(request.valor());
+        pagamento.setPedidoId(request.pedidoId());
         pagamento.setStatus(Status.CRIADO);
-        pagamento.setExpiracao(pagamentoRequest.expiracao());
-        pagamento.setPedidoId(pagamentoRequest.pedidoId());
-        pagamento.setFormaDePagamento(TipoPagamento.valueOf(pagamentoRequest.formaDePagamento().toString()));
 
         pagamentoRepository.save(pagamento);
-        return ResponseEntity.status(201)
-                .body(new PagamentoResponse(pagamento.getId(), pagamento.getValor(),
-                        pagamento.getStatus()))
-                .getBody();
-
+        return new PagamentoResponse(pagamento.getId(), pagamento.getValor(), pagamento.getStatus(), getTipo(pagamento));
     }
 
     @Transactional
     public PagamentoResponse atualizarStatusPagamento(Long id, PagamentoRequest request) {
-        Pagamento pagamento = pagamentoRepository.findById(id)
+        Pagamento pagamentoAntigo = pagamentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
 
-        if (pagamento.getStatus() == Status.APROVADO) {
+        if (pagamentoAntigo.getStatus() == Status.APROVADO) {
             throw new RuntimeException("Não é possível alterar o status de um pagamento aprovado");
         }
-        else if (pagamento.getStatus() == Status.CRIADO) {
-            pagamento.setValor(request.valor());
-            pagamento.setNome(request.nome());
-            pagamento.setNumero(request.numero());
-            pagamento.setCodigo(request.codigo());
-            pagamento.setStatus(Status.CRIADO);
-            pagamento.setExpiracao(request.expiracao());
-            pagamento.setPedidoId(request.pedidoId());
-            pagamento.setFormaDePagamento(TipoPagamento.valueOf(request.formaDePagamento().toString()));
-
-            pagamentoRepository.save(pagamento);
-            return ResponseEntity.status(HttpStatus.ACCEPTED)
-                    .body(new PagamentoResponse(pagamento.getId(), pagamento.getValor(),
-                            pagamento.getStatus()))
-                    .getBody();
-        }
-
-        else {
-            throw new RuntimeException("Pagamento foi reprovado e não pode ser alterado");
-        }
+        pagamentoRepository.delete(pagamentoAntigo);
+        return criarPagamento(request);
     }
 
     @Transactional
@@ -90,5 +75,12 @@ public class PagamentoService {
         } else {
             throw new RuntimeException("Pagamento não encontrado");
         }
+    }
+
+    private TipoPagamento getTipo(Pagamento pagamento) {
+        if (pagamento instanceof PagamentoCartao cartao) {
+            return cartao.getFormaDePagamento();
+        }
+        return TipoPagamento.PIX;
     }
 }

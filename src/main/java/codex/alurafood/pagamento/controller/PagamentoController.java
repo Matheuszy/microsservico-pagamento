@@ -2,7 +2,6 @@ package codex.alurafood.pagamento.controller;
 
 import codex.alurafood.pagamento.dto.request.PagamentoRequest;
 import codex.alurafood.pagamento.dto.response.PagamentoResponse;
-import codex.alurafood.pagamento.model.Pagamento;
 import codex.alurafood.pagamento.service.PagamentoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -17,7 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequestMapping("pagamento")
 public class PagamentoController {
 
-    private PagamentoService service;
+    private final PagamentoService service;
+
     public PagamentoController(PagamentoService service) {
         this.service = service;
     }
@@ -28,7 +28,7 @@ public class PagamentoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PagamentoResponse> obterPagamento(@PathVariable @Valid Long id) {
+    public ResponseEntity<PagamentoResponse> obterPagamento(@PathVariable Long id) {
         PagamentoResponse response = service.buscarPagamentoPorId(id);
         return ResponseEntity.ok(response);
     }
@@ -40,14 +40,14 @@ public class PagamentoController {
         return ResponseEntity.created(uriComponents.toUri()).body(response);
     }
 
-    @PutMapping("/atualizar")
-    public ResponseEntity<PagamentoResponse> atualizarPagamento(@PathVariable @Valid Long id, @RequestBody @Valid PagamentoRequest request) {
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<PagamentoResponse> atualizarPagamento(@PathVariable Long id, @RequestBody @Valid PagamentoRequest request) {
         PagamentoResponse atualizado = service.atualizarStatusPagamento(id, request);
         return ResponseEntity.ok(atualizado);
     }
 
-    @DeleteMapping("/deletar")
-    public ResponseEntity<PagamentoResponse> deletarPagamento(@PathVariable @Valid Long id) {
+    @DeleteMapping("/deletar/{id}")
+    public ResponseEntity<Void> deletarPagamento(@PathVariable Long id) {
         service.deletarPagamento(id);
         return ResponseEntity.noContent().build();
     }
