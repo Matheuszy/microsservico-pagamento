@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "pagamentos")
-@Inheritance(strategy = InheritanceType.JOINED) // A mágica acontece aqui!
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 public abstract class Pagamento {

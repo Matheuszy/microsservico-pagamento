@@ -3,6 +3,7 @@ package codex.alurafood.pagamento.service;
 import codex.alurafood.pagamento.dto.request.PagamentoCartaoRequest;
 import codex.alurafood.pagamento.dto.request.PagamentoRequest;
 import codex.alurafood.pagamento.dto.response.PagamentoResponse;
+import codex.alurafood.pagamento.http.PedidoClient;
 import codex.alurafood.pagamento.model.*;
 import codex.alurafood.pagamento.repository.PagamentoRepository;
 import jakarta.transaction.Transactional;
@@ -10,10 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PagamentoService {
 
     private final PagamentoRepository pagamentoRepository;
+
+    private PedidoClient pedidoClient;
 
     public PagamentoService(PagamentoRepository pagamentoRepository) {
         this.pagamentoRepository = pagamentoRepository;
@@ -82,5 +87,17 @@ public class PagamentoService {
             return cartao.getFormaDePagamento();
         }
         return TipoPagamento.PIX;
+    }
+
+    public void comfirmacaoDePagamento(Long id) {
+        Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
+
+        if (pagamento.isPresent()) {
+            pagamento.get().setStatus(Status.APROVADO);
+            pagamentoRepository.save(pagamento.get());
+            pedidoClient.atualizarPagamento(pagamento.get().getId());
+        } else {
+            throw new RuntimeException("Pagamento não encontrado");
+        }
     }
 }
